@@ -1,0 +1,7 @@
+# gRPC Polyglot Lab
+
+Server gRPC (Go) yang dipanggil oleh dua client berbeda bahasa (Python dan Node.js) menggunakan satu kontrak `user.proto`.
+
+## Analisis Pendekatan Kompilasi: Static Code Generation vs Dynamic Runtime Generation
+
+Pada pendekatan *static code generation* (Go dan Python), file `user.proto` diproses lebih dulu oleh compiler `protoc` pada tahap pengembangan. Hasilnya adalah file kode sumber nyata (`user.pb.go` dan `user_grpc.pb.go` untuk Go, serta `user_pb2.py` dan `user_pb2_grpc.py` untuk Python) yang disimpan di proyek dan ikut di-commit. Kode tersebut memberi tipe data yang jelas, sehingga kesalahan seperti salah nama field bisa terdeteksi lebih awal dan editor dapat memberi autocompletion. Konsekuensinya, setiap kali `user.proto` berubah (misalnya penambahan field `phone`), developer wajib menjalankan ulang `protoc` agar kode hasil generate sinkron dengan kontrak. Sebaliknya, pada pendekatan *dynamic runtime generation* (Node.js), tidak ada tahap kompilasi dan tidak ada file kode hasil generate. Library `@grpc/proto-loader` membaca file `user.proto` langsung saat program dijalankan, lalu membangun definisi service dan message di memori. Pendekatan ini lebih praktis dan fleksibel karena perubahan skema cukup disimpan di `user.proto` dan program dijalankan ulang, tetapi tidak ada pengecekan tipe saat penulisan kode, kesalahan baru muncul saat runtime, dan ada sedikit beban tambahan karena file `.proto` harus diparsing setiap kali aplikasi dimulai serta harus tersedia di lokasi runtime.
