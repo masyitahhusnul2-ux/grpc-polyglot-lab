@@ -13,7 +13,8 @@ const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
 const userProto = grpc.loadPackageDefinition(packageDefinition).user;
 
 function main() {
-    const client = new userProto.UserService('localhost:50051', grpc.credentials.createInsecure());
+    const serverAddress = process.env.GRPC_SERVER || 'localhost:50051';
+const client = new userProto.UserService(serverAddress, grpc.credentials.createInsecure());
     console.log("Mengirim request ke Go Server menggunakan Node.js...");
     client.GetUserProfile({ user_id: 1 }, (error, response) => {
         if (!error) {

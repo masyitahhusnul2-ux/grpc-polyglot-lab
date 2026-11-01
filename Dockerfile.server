@@ -1,0 +1,12 @@
+
+FROM golang:1.26.2-alpine
+
+WORKDIR /app
+
+COPY go-server/ ./
+
+RUN go mod download
+
+EXPOSE 50051
+
+CMD ["go", "run", "main.go"]
